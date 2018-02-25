@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<zk>
+	<device-config>
+		<device-type>ajax</device-type>
+		<timeout-uri>/index.zul</timeout-uri><!-- An empty URL can cause the browser to reload the same URL -->
+	    <server-push-class>org.zkoss.zk.ui.impl.PollingServerPush</server-push-class>
+	</device-config>
+	<session-config>
+	    <device-type>ajax</device-type>    
+	    <timeout-uri>/index.zul</timeout-uri>
+		<automatic-timeout>true</automatic-timeout>
+	    <session-timeout>3600</session-timeout>
+	    <timeout-message>script:<![CDATA[
+	   	   $("#z-timeout").remove();
+		   $('body').append('<div id="z-timeout"></div>');
+		   $("#z-timeout").slideDown(1000);
+		   $('body').mouseover(function() {
+		     $("img","#z-timeout").show();
+			 $('#container > div:gt(0)').fadeOut(1000);
+			 setTimeout("location.reload()", 1500);
+		   });
+	    ]]></timeout-message>    
+	</session-config>	
+</zk>

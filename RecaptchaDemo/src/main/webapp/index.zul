@@ -1,0 +1,63 @@
+<?taglib uri="/WEB-INF/tld/web/core.dsp.tld" prefix="c"?>
+<?link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel='stylesheet' type='text/css' ?>
+
+<div xmlns:h="http://www.w3.org/1999/xhtml" xmlns:zk="http://www.zkoss.org/2005/zk" xmlns:w="client" viewModel="@id('vm') @init('it.papersoft.viewmodels.IndexViewModel')">
+	<h:main role="main">
+		<h:section class="jumbotron text-center">
+        	<h:div class="container">
+	          	<h:h1 class="jumbotron-heading">ZK Recaptcha integration</h:h1>
+				<h:p class="lead text-muted">
+					<h:div class="g-recaptcha" id="recaptchaDiv" data-sitekey="YOUR SITE KEY"></h:div>
+					<h:span id="recaptchaerror"></h:span> 
+				</h:p>
+			</h:div>
+			<div visible="@load(vm.submitError eq ''?'false':'true')">
+				<div class="alert alert-danger" visible="@load(vm.submitError eq 'ko'?'true':'false')">
+					<label value="Invalid Captcha"></label>
+				</div>
+				<div class="alert alert-success" visible="@load(vm.submitError eq 'ok'?'true':'false')">
+					<label value="Good Captcha"></label>
+				</div>
+			</div>
+			<button id="btnLogin" sclass="btn btn-success" onClick="@command('submit')" label="Submit">
+				<attribute w:name="doClick_">
+					<![CDATA[ 
+						function (evt) { 
+			    			if (rchecked) {
+								$(".fld").blur(); // call the original doClick_ function 
+								this.$doClick_(evt); 
+			    			}
+			    			else
+			    				$("#recaptchaerror").html("Invalid Captcha");
+						}
+					]]>
+				</attribute>
+			</button>
+		</h:section>
+	</h:main>
+	<textbox value="@bind(vm.recaptchaResponse)" visible="false" id="gRecaptchaResponse" />
+	
+	<h:script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&amp;render=explicit" async="true" defer="true"></h:script>
+	<h:script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" async="true" defer="true"></h:script>
+	
+	<script>
+	<![CDATA[
+ 	   	var rchecked = false;
+	    var onloadCallback = function() {
+			grecaptcha.render('recaptchaDiv', {
+		          'sitekey' : $('#recaptchaDiv').data('sitekey'),
+		          'callback' : verifyCallback,
+	        });
+	    }
+
+	    var verifyCallback = function(response) {
+	    	rchecked = true;
+	    	$("#recaptchaerror").html("");
+			var elem = '${gRecaptchaResponse.uuid}';
+			$("#" + elem).val(response);
+			$("#" + elem).blur();
+		};
+	]]>
+	</script>
+	
+</div>
